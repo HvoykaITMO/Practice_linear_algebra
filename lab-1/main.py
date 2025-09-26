@@ -1,5 +1,6 @@
 from sympy import Matrix, pprint
 from itertools import product
+from random import sample
 
 alphabet_dict = {
     'А': 0,
@@ -71,7 +72,7 @@ def Hill_cipher(key: Matrix, vect: Matrix) -> Matrix: # Шифр Хилла: у�
     return close_v_abs
 
 
-def translate_from_vectors(vects_list: list) -> str:
+def translate_from_vectors(vects_list: list) -> str: # generate a word from vectors
     message = ''
     vects_nums = range(len(vects_list))
     vects_row_idxs, vects_col_idxs = range(vects_list[0].shape[0]), range(vects_list[0].shape[1])
@@ -79,7 +80,7 @@ def translate_from_vectors(vects_list: list) -> str:
         message += reversed_alph_dict[vects_list[p][i, j]]
     return message
 
-def start_coding(num: int, key: Matrix, p: Matrix) -> None:
+def start_coding(num: int, key: Matrix, p: Matrix) -> None: # Execute the ciphering
     print(f'\n{num})------------------------------------------\n')
     subvectors = make_subvectors(P, key.shape[1])
     
@@ -103,8 +104,22 @@ def start_coding(num: int, key: Matrix, p: Matrix) -> None:
     return cipher_word
     
     
-def damage_cipher_word(word)
-    
+def damage_cipher_word(word: str, k: int) -> str:
+    print('############################################')
+    print('Зашифрованное сообщение:', word)
+    damage_word = list(word)
+    dict_letter_idxs = sample(sorted(alphabet_dict.values()), k)
+    word_replace_idxs = sample(list(range(len(word))), k)
+    for u, v in zip(word_replace_idxs, dict_letter_idxs):
+        print(f'Замена: {damage_word[u]} -> {reversed_alph_dict[v]}')
+        damage_word[u] = reversed_alph_dict[v]
+        
+    damage_word = ''.join(damage_word)
+    print('Искажённое слово:', damage_word)
+    print('############################################')
+    return damage_word
+               
+        
 
 
 #------------------
@@ -138,3 +153,6 @@ assert K3.det() != 0
 cipher_word_k1 = start_coding(num=1, key=K1, p=P)
 cipher_word_k2 = start_coding(num=2, key=K2, p=P)
 cipher_word_k3 = start_coding(num=3, key=K3, p=P)
+
+
+damage_cipher_word(cipher_word_k1, 3)
