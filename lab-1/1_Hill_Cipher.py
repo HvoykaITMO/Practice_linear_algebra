@@ -1,6 +1,10 @@
 from sympy import Matrix, pprint
 from itertools import product
 from random import sample
+import os
+
+files = os.listdir()  # Текущая директория
+print(files)
 
 alphabet_dict = {
     'А': 0,
