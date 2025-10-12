@@ -1,10 +1,7 @@
-from sympy import Matrix, pprint
+from sympy import Matrix, pprint, latex
 from itertools import product
 from random import sample
-import os
 
-files = os.listdir()  # Текущая директория
-print(files)
 
 alphabet_dict = {
     'А': 0,
@@ -155,16 +152,16 @@ print('Исходное сообщение:', ' '.join(word))
 # Задаём наши ключи. Если их определитель равен нулю, получим ошибку
 K1 = Matrix([[alphabet_dict['К'], alphabet_dict['Ы']], 
              [alphabet_dict['У'], alphabet_dict['Ц']]])
-assert K1.det() != 0
+assert K1.det() % len(alphabet_dict) != 0
 K2 = Matrix([[alphabet_dict['М'], alphabet_dict['Л'], alphabet_dict['К']],
             [alphabet_dict['Т'], alphabet_dict['Я'], alphabet_dict['Х']],
             [alphabet_dict['Ч'], alphabet_dict['Щ'], alphabet_dict['З']]])
-assert K2.det() != 0
+assert K2.det() % len(alphabet_dict) != 0
 K3 = Matrix([[alphabet_dict['Ч'], alphabet_dict['Г'], alphabet_dict['П'], alphabet_dict['Ф']],
             [alphabet_dict['Д'], alphabet_dict['Ж'], alphabet_dict['Й'], alphabet_dict['Ш']],
             [alphabet_dict['И'], alphabet_dict['А'], alphabet_dict['Э'], alphabet_dict['К']],
             [alphabet_dict['Ю'], alphabet_dict['О'], alphabet_dict['Ы'], alphabet_dict['Н']]])
-assert K3.det() != 0
+assert K3.det() % len(alphabet_dict) != 0
 
 # Шифруем наше сообщение различными ключами
 cipher_word_K1 = start_coding(key=K1, p=generate_vect_from_word(word), num=1)
@@ -174,7 +171,7 @@ cipher_word_K3 = start_coding(key=K3, p=generate_vect_from_word(word), num=3)
 # Искажаем зашифрованные сообщения
 damage_word_K1 = damage_cipher_word(word=cipher_word_K1, k=3)
 damage_word_K2 = damage_cipher_word(word=cipher_word_K2, k=3)
-damage_word_K3 = damage_cipher_word(word=cipher_word_K3, k=3)
+damage_word_K3 = "ЯЗСГЩСОЙУКЁР"
 
 # Дешифруем искажённые сообщения
 start_decoding(key=K1, c=generate_vect_from_word(damage_word_K1))

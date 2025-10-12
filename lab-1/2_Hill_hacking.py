@@ -50,7 +50,7 @@ def make_subvectors(v: Matrix, length: int) -> list:  # Поделить век�
     for i in range(len(v) // length):
         subvectors.append(v[start:start + length, 0])
         start += length
-
+    
     return subvectors
 
 
@@ -170,8 +170,8 @@ with open('lab-1/word.txt', 'r', encoding='utf-8') as f:
 
 key = generate_key(2)  # Бог его знает какой, обратимый, ключ.
 
-cipher_word1 = start_coding(key, generate_vect_from_word(word1))  # Известное зашифрованное слово
-decode_word1 = start_decoding(key, generate_vect_from_word(cipher_word1))  # Известное исходное слово
+# cipher_word1 = start_coding(key, generate_vect_from_word(word1), show_subvs=True)  # Известное зашифрованное слово
+# decode_word1 = start_decoding(key, generate_vect_from_word(cipher_word1))  # Известное исходное слово
 
 
 #-------------------------
@@ -179,9 +179,21 @@ decode_word1 = start_decoding(key, generate_vect_from_word(cipher_word1))  # И�
 # Составим из них матрицы 2x2 P(исходные векторы) и С(зашифрованные векторы) в столбцах которых будут взятые векторы.
 # Останется найти ключ по следующей формуле: K = C * P^-1
 #-------------------------
-repaired_key = repair_key(decode_word1, cipher_word1, key.shape[1])  # Восстановление ключа
+# repaired_key = repair_key(decode_word1, cipher_word1, key.shape[1], show_annot=True)  # Восстановление ключа
 
-cipher_word2 = start_coding(key, generate_vect_from_word(word2))
-decode_word2 = start_decoding(repaired_key, generate_vect_from_word(cipher_word2))
+# cipher_word2 = start_coding(key, generate_vect_from_word(word2))
+# decode_word2 = start_decoding(repaired_key, generate_vect_from_word(cipher_word2), show_subvs=True)
 
 
+# c1 = make_subvectors(generate_vect_from_word("ГАЗООБМЕННИК"), key.shape[1])
+k_rep = Matrix([
+    [11, 23],
+    [13, 9]
+])
+k_rep_rev = k_rep.inv_mod(len(alphabet_dict))
+
+# pprint(c1)
+
+start_coding(k_rep_rev, generate_vect_from_word("ГАЗООБМЕННИК"))
+
+pprint(generate_vect_from_word("СЕДУЦХХРНВЯМ"))
