@@ -1,19 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sympy import Matrix
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from util import *
+from util import transform_points
+from matrix import scale_matrix
+from pprint import pprint
 
 
 def draw_shape(ax, vertices, faces, color):
-    vertices = (vertices[:3, :] / vertices[3, :]).T
-    ax.add_collection3d(Poly3DCollection(vertices[faces], facecolors=color
-        , edgecolors='k', linewidths=0.2))
+    """Рисует 3D фигуру"""
+    vertices_3d = (vertices[:3, :] / vertices[3, :]).T
+    ax.add_collection3d(Poly3DCollection(vertices_3d[faces], 
+                                         facecolors=color,
+                                         edgecolors='k', 
+                                         linewidths=0.2))
 
 
 def main(vertices_original, vertices_transformed, faces_cube, title="Преобразование", m=None):
+    """Показывает два графика: до и после преобразования"""
     if m is None:
-        m = max(np.max(np.abs(vertices_original)), np.max(np.abs(vertices_transformed)))
+        m = max(np.max(np.abs(vertices_original)), 
+                np.max(np.abs(vertices_transformed)))
     
     fig = plt.figure(figsize=(14, 6))
     
@@ -56,22 +62,13 @@ def main(vertices_original, vertices_transformed, faces_cube, title="Преоб�
     plt.show()
 
 
-def scale_matrix(sx, sy, sz):
-    return Matrix([
-        [sx, 0,  0,  0],
-        [0,  sy, 0,  0],
-        [0,  0,  sz, 0],
-        [0,  0,  0,  1],
-    ])
-
-
 if __name__ == '__main__':
     vertices_cube = np.array([
         [-1,  1,  1, -1, -1,  1,  1, -1],
         [-1, -1,  1,  1, -1, -1,  1,  1],
         [-1, -1, -1, -1,  1,  1,  1,  1],
         [ 1,  1,  1,  1,  1,  1,  1,  1]
-    ])
+    ], dtype=float)
 
     faces_cube = np.array([
         [0, 1, 5, 4],
@@ -82,13 +79,43 @@ if __name__ == '__main__':
         [4, 5, 6, 7]
     ])
     
+    # ========== First matrix ==========
     sx, sy, sz = 1, 3, 1
-    new_vertices = transform_points(vertices_cube, scale_matrix(sx, sy, sz))
+    s1 = scale_matrix(sx, sy, sz)
+    print("s1:")
+    pprint(s1)
+    new_vertices = transform_points(vertices_cube, s1)
     
-
     main(
         vertices_cube, 
         new_vertices, 
         faces_cube, 
         title=f"Масштабирование: ({sx}, {sy}, {sz})"
+    )
+
+    # ========== Second matrix ==========
+    sx, sy, sz = 2, 1, 2
+    s2 = scale_matrix(sx, sy, sz)
+    print("s2:")
+    pprint(s2)
+    new_vertices = transform_points(vertices_cube, s2)
+    
+    main(
+        vertices_cube, 
+        new_vertices, 
+        faces_cube, 
+        title=f"Масштабирование: ({sx}, {sy}, {sz})"
+    )
+
+    # ========== Third matrix (composition) ==========
+    s3 = s1 @ s2
+    print("s3 = s1 @ s2:")
+    pprint(s3)
+    new_vertices = transform_points(vertices_cube, s3)
+    
+    main(
+        vertices_cube, 
+        new_vertices, 
+        faces_cube, 
+        title=f"Масштабирование: (композиция)"
     )
