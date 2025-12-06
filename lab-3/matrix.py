@@ -47,3 +47,34 @@ def rotation_matrix(v, theta):
     R = expm(J * theta)
     
     return R
+
+
+def rotation_around_point(v, theta, M):
+    """
+    Поворот вокруг оси, проходящей через точку M с направлением v.
+    
+    Формула: R_M = T(M) * R_v(theta) * T(-M)
+    
+    v: направление оси (3,) array
+    theta: угол в радианах
+    M: точка в 3D (3,) array или однородные координаты (4,)
+    
+    возвращает: (4, 4) матрица поворота
+    """
+    # Если M в однородных координатах, извлекаем (x, y, z)
+    if len(M) == 4:
+        M3 = M[:3] / M[3]
+    else:
+        M3 = M
+    
+    # Матрицы трансляции
+    T_plus = translate_matrix(M3[0], M3[1], M3[2])
+    T_minus = translate_matrix(-M3[0], -M3[1], -M3[2])
+    
+    # Матрица поворота вокруг начала координат
+    R_center = rotation_matrix(v, theta)
+    
+    # Композиция: R_M = T(M) * R_v(theta) * T(-M)
+    R_M = T_plus @ R_center @ T_minus
+    
+    return R_M
