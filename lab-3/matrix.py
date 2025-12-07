@@ -78,3 +78,31 @@ def rotation_around_point(v, theta, M):
     R_M = T_plus @ R_center @ T_minus
     
     return R_M
+
+
+def view_matrix(camera_position, camera_rotation_axis, camera_rotation_angle):
+    """
+    Вычисляет view-матрицу C^{-1}, которая преобразует из world space в camera space.
+    
+    Формула: C^{-1} = R^T * T(-camera_position)
+    
+    camera_position: (3,) array — позиция камеры в мировых координатах
+    camera_rotation_axis: (3,) array — ось поворота камеры
+    camera_rotation_angle: float — угол поворота камеры в радианах
+    
+    возвращает: (4, 4) view matrix
+    """
+    # Матрица поворота камеры
+    R_camera = rotation_matrix(camera_rotation_axis, camera_rotation_angle)
+    
+    # Транспонируем блок вращения 3x3 (инверсия поворота)
+    R_inv = R_camera.copy()
+    R_inv[:3, :3] = R_camera[:3, :3].T
+    
+    # Сдвиг на -camera_position
+    T_neg = translate_matrix(-camera_position[0], -camera_position[1], -camera_position[2])
+    
+    # View matrix = R^T * T(-pos)
+    C_inv = R_inv @ T_neg
+    
+    return C_inv
