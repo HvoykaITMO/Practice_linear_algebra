@@ -7,37 +7,29 @@ def draw_shape(ax, vertices, faces, color):
     ax.add_collection3d(Poly3DCollection(vertices[faces], facecolors=color
         , edgecolors='k', linewidths=0.2))
 
-
-def main(vertices_cube, faces_cube):
-
+def main(vertices, faces):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d', proj_type='ortho')
-
-    draw_shape(ax, vertices_cube, faces_cube, 'blue')
-
+    draw_shape(ax, vertices, faces, 'blue')
     ax.set_box_aspect([1,1,1])
     ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.set_zlim(-3, 3)
     ax.view_init(azim=-37.5, elev=30)
     ax.set_xticks(np.linspace(-3, 3, 5))
     ax.set_yticks(np.linspace(-3, 3, 5))
     ax.set_zticks(np.linspace(-3, 3, 5))
-
     plt.show()
-    
 
 if __name__ == '__main__':
-    vertices_cube = np.array([
+    vertices = np.array([
     [0,  2, -2,  0],
     [0,  0,  0,  2],
     [3,  0,  0,  0],
     [1,  1,  1,  1]
     ])
-
-    faces_cube = np.array([
+    faces = np.array([
         [0, 1, 3],
         [0, 1, 2],
         [0, 2, 3],
         [1, 2, 3]
     ])
-    
-    main(vertices_cube, faces_cube)
+    main(vertices, faces)
