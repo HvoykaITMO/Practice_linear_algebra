@@ -18,7 +18,7 @@ def rebuild_matrix_from_SVD(U, S, Vh):
     return np.clip(U @ np.diag(S) @ Vh, 0, 255).astype(np.uint8)  # с Защитой от переполнения
 
 
-def load_picture(path, rs):
+def load_picture(path, rs, filename=""):
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     m, n = img.shape
     total_memory = m * n
@@ -39,8 +39,16 @@ def load_picture(path, rs):
         memory_amount.append(memory)
         percent_memory.append(round(memory / total_memory * 100, 2))
 
+        cv2.imwrite(f"results/{filename}_r{r}.jpg", img_new)
         cv2.imshow(f"r = {r}", img_new)
-        cv2.imwrite(f"results/r{r}.jpg", img_new)
-    df = pd.DataFrame({"Количество Синг.ч.": rs,"Чисел для хранения в памяти": memory_amount, "Степень сжатия": percent_memory})
+    df = pd.DataFrame({"Количество Синг.ч.": rs,"Чисел для хранения в памяти": memory_amount, "Отношение к исходной памяти": percent_memory})
     print(df)
     cv2.waitKey(0)
+
+
+if __name__ == "__main__":
+    rs = [2, 7, 20, 40, 120, 200, 240, 300, 360]
+    load_picture("images/Cat.jpg", rs, "Cat")
+
+    rs = [6, 10, 20, 50, 100, 280, 540, 720, 962]
+    load_picture("images/Croco.jpg", rs, "Croco")
